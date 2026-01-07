@@ -28,7 +28,8 @@ const EventForm = ({ onEventSent }) => {
             if (onEventSent) onEventSent();
         } catch (err) {
             console.error(err);
-            alert('Failed to send event');
+            const errorMessage = err.response?.data?.message || err.message || 'Failed to send event';
+            alert(`Error: ${errorMessage}. Check console for details.`);
         } finally {
             setLoading(false);
         }

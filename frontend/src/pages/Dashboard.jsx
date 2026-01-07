@@ -35,7 +35,7 @@ const Dashboard = () => {
         fetchLeads();
 
         // Socket.IO Connection
-        const socket = io(import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : (import.meta.env.MODE === 'production' ? '/' : 'http://localhost:5001'), {
+        const socket = io(import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : (import.meta.env.MODE === 'production' ? 'https://lead-scoring-back.vercel.app' : 'http://localhost:5001'), {
             path: '/socket.io/',
             transports: ['polling', 'websocket'],
             withCredentials: true
