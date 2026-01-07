@@ -88,10 +88,19 @@ app.use('/api/rules', ruleRoutes);
 
 // Health Check - Important for Vercel
 app.get('/', (req, res) => {
-    res.status(200).send('Event-Driven Lead Scoring API Running');
+    const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
+    res.status(200).json({
+        message: 'Event-Driven Lead Scoring API Running',
+        database: dbStatus,
+        timestamp: new Date().toISOString()
+    });
 });
 app.get('/api', (req, res) => {
-    res.status(200).send('API Root Healthy');
+    const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
+    res.status(200).json({
+        message: 'API Root Healthy',
+        database: dbStatus
+    });
 });
 app.head('/', (req, res) => {
     res.status(200).end();

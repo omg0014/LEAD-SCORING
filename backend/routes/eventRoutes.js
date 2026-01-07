@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
         res.status(202).json({ message: 'Event accepted asynchronously', eventId });
     } catch (error) {
         console.error('Event Ingestion Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
     }
 });
 
