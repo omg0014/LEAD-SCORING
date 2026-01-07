@@ -44,21 +44,12 @@ async function seedRules() {
 
 // Middleware
 // Middleware
-const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:5173', 'https://lead-scoring-front.vercel.app', 'https://lead-scoring-back.vercel.app'];
+// Allow ANY origin with credentials (effectively public API)
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
-            callback(null, true);
-        } else {
-            console.log('Blocked by CORS:', origin);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    origin: true, // Reflects the request origin, allowing all
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 app.use(express.json());
 
@@ -67,8 +58,12 @@ app.use('/api/events', eventRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/rules', ruleRoutes);
 
+// Health Check - Important for Vercel
 app.get('/', (req, res) => {
-    res.send('Event-Driven Lead Scoring API Running');
+    res.status(200).send('Event-Driven Lead Scoring API Running');
+});
+app.get('/api', (req, res) => {
+    res.status(200).send('API Root Healthy');
 });
 app.head('/', (req, res) => {
     res.status(200).end();
