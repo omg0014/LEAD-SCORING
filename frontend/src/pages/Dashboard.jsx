@@ -34,25 +34,32 @@ const Dashboard = () => {
     useEffect(() => {
         fetchLeads();
 
-        // Socket.IO Connection
-        const socket = io(import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : (import.meta.env.MODE === 'production' ? 'https://lead-scoring-back.vercel.app' : 'http://localhost:5001'), {
-            path: '/socket.io/',
-            transports: ['polling', 'websocket'],
-            withCredentials: true
-        });
+        // Socket.IO Connection - Only in Development
+        // Vercel Serverless Functions do not support persistent websockets.
+        if (import.meta.env.MODE !== 'production') {
+            const socket = io('http://localhost:5001', {
+                path: '/socket.io/',
+                transports: ['polling', 'websocket'],
+                withCredentials: true
+            });
 
-        socket.on('connect', () => {
-            console.log('Connected to WebSocket');
-        });
+            socket.on('connect', () => {
+                console.log('Connected to WebSocket');
+            });
 
-        socket.on('leadUpdated', (data) => {
-            console.log('Real-time update:', data);
-            fetchLeads();
-        });
+            socket.on('lead_update', (updatedLead) => {
+                setLeads(prev => prev.map(lead =>
+                    lead._id === updatedLead._id ? updatedLead : lead
+                ));
+            });
 
-        return () => {
-            socket.disconnect();
-        };
+            socket.on('score_update', (data) => {
+                // Refresh leads on score update for accurate ranking
+                fetchLeads();
+            });
+
+            return () => socket.disconnect();
+        }
     }, []);
 
     // Filter Logic

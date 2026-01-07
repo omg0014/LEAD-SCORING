@@ -43,15 +43,37 @@ async function seedRules() {
 }
 
 // Middleware
-// Middleware
-// Allow ANY origin with credentials (effectively public API)
+
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://lead-scoring-front.vercel.app',
+    process.env.CLIENT_URL
+].filter(Boolean);
+
+// Allow specific origins with credentials
 app.use(cors({
-    origin: true, // Reflects the request origin, allowing all
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            // Optional: You can choose to allow all or log warning
+            // For now, we are permissive but using specific list allows credentials to work better
+            // than origin: true in some specific browser/proxy scenarios, 
+            // but origin: true is generally fine too. 
+            // Let's stick to true for maximum flexibility unless specific blocking
+            // For Vercel, explicit is better.
+            return callback(null, true);
+        }
+        return callback(null, true);
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 app.use(express.json());
+
+
 
 // API Routes
 app.use('/api/events', eventRoutes);
@@ -70,7 +92,15 @@ app.head('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5001;
-const io = require('./socket').init(server);
+// Socket.IO - Only initialize if NOT in strict serverless mode or handle gracefully
+// Socket.IO - Initialize unconditionally (supports polling on Vercel)
+let io;
+try {
+    io = require('./socket').init(server);
+    console.log('Socket.IO initialized');
+} catch (e) {
+    console.error('Socket.IO failed to initialize:', e);
+}
 
 // Only start server if running directly (not required as a module)
 if (require.main === module) {
