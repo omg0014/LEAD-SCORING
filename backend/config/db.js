@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 // Only require mongodb-memory-server if NOT in production/Vercel to avoid large bundle/download attempts
+console.log('DB Config Loaded. VERCEL:', process.env.VERCEL, 'NODE_ENV:', process.env.NODE_ENV);
 const MongoMemoryServer = process.env.VERCEL ? null : require('mongodb-memory-server').MongoMemoryServer;
 
 const connectDB = async () => {
