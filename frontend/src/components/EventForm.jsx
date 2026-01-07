@@ -35,35 +35,35 @@ const EventForm = ({ onEventSent }) => {
     };
 
     return (
-        <Card className="border-border bg-card">
+        <Card className="border-white/10 bg-card/50 backdrop-blur-sm shadow-xl">
             <CardHeader className="p-4 pb-2">
                 <CardTitle className="text-sm font-medium">Simulate Event</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-2">
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                        <label className="text-xs font-medium text-muted-foreground">Lead ID</label>
+                    <div className="space-y-3">
+                        <label className="text-sm font-medium text-foreground/80 ml-1">Lead ID</label>
                         <Input
                             type="text"
                             required
                             placeholder="e.g. user_123"
                             value={formData.leadId}
                             onChange={e => setFormData({ ...formData, leadId: e.target.value })}
-                            className="bg-muted/10 font-mono"
+                            className="bg-input/50 border-white/10 focus:border-primary font-mono text-foreground placeholder:text-muted-foreground/50 h-10 text-base"
                         />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-xs font-medium text-muted-foreground">Event Type</label>
+                    <div className="space-y-3">
+                        <label className="text-sm font-medium text-foreground/80 ml-1">Event Type</label>
                         <select
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-10 w-full rounded-md border border-white/10 bg-input/50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                             value={formData.eventType}
                             onChange={e => setFormData({ ...formData, eventType: e.target.value })}
                         >
-                            <option>Page View</option>
-                            <option>Email Open</option>
-                            <option>Form Submission</option>
-                            <option>Demo Request</option>
-                            <option>Purchase</option>
+                            <option className="bg-popover text-popover-foreground">Page View</option>
+                            <option className="bg-popover text-popover-foreground">Email Open</option>
+                            <option className="bg-popover text-popover-foreground">Form Submission</option>
+                            <option className="bg-popover text-popover-foreground">Demo Request</option>
+                            <option className="bg-popover text-popover-foreground">Purchase</option>
                         </select>
                     </div>
                     <Button type="submit" disabled={loading} className="w-full">

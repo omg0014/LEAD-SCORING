@@ -58,58 +58,65 @@
 
 @layer base {
   :root {
-    /* Humanized Blue Theme (Deep Slate Blue Background) */
+    /* Humanized Blue Theme Refined */
+    /* Background: Deep Rich Navy */
     --background: 222 47% 11%;
+    /* Foreground: Soft White with slight blue tint */
     --foreground: 210 40% 98%;
 
-    --card: 217 33% 17%;
+    /* Card: Slightly lighter navy for layering */
+    --card: 217 33% 15%;
     --card-foreground: 210 40% 98%;
 
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
+    /* Primary: Electric Blue / Cyan for high contrast actions */
+    --primary: 199 89% 48%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 217 33% 17%;
+    --secondary: 217 33% 20%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 217 33% 20%;
+    --muted-foreground: 215 20% 70%;
 
-    --accent: 217 33% 17%;
+    --accent: 199 89% 48%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 224.3 76.3% 48%;
-    --radius: 0.5rem;
+    /* Borders: Visible lighter blue for structure */
+    --border: 217 20% 25%;
+    /* Inputs: Darker than card to look "inset" or lighter to pop - choosing inset style */
+    --input: 222 47% 9%;
+
+    --ring: 199 89% 48%;
+    --radius: 0.75rem;
+    /* Softer, rounder corners */
   }
 
-  /* Force the same theme for .dark preference to maintain consistency */
   .dark {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-    --card: 217 33% 17%;
+    --card: 217 33% 15%;
     --card-foreground: 210 40% 98%;
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 217 33% 17%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217 33% 20%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 17%;
+    --muted: 217 33% 20%;
+    --muted-foreground: 215 20% 70%;
+    --accent: 199 89% 48%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 224.3 76.3% 48%;
+    --border: 217 20% 25%;
+    --input: 222 47% 9%;
+    --ring: 199 89% 48%;
   }
 }
 
@@ -121,5 +128,8 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-size: 16px;
+    /* Explicit base size */
+    line-height: 1.5;
   }
 }

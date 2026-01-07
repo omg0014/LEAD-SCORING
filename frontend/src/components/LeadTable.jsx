@@ -35,28 +35,28 @@ const LeadTable = ({ leads }) => {
                 </TableHeader>
                 <TableBody>
                     {leads.map((lead, index) => (
-                        <TableRow key={lead._id}>
-                            <TableCell className="font-mono text-center font-bold text-muted-foreground">
+                        <TableRow key={lead._id} className="transition-all duration-200 hover:translate-x-1 hover:bg-muted/30 border-b border-border/50 group">
+                            <TableCell className="font-mono text-center font-bold text-muted-foreground text-sm">
                                 {String(index + 1).padStart(2, '0')}
                             </TableCell>
                             <TableCell>
-                                <div className="flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-full border bg-muted/20 flex items-center justify-center text-xs font-mono text-muted-foreground">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-9 w-9 rounded-full border border-white/10 bg-muted/20 flex items-center justify-center text-sm font-bold font-mono text-primary shadow-sm group-hover:scale-110 transition-transform">
                                         {lead._id.substring(0, 2).toUpperCase()}
                                     </div>
-                                    <span className="font-mono font-medium">{lead._id}</span>
+                                    <span className="font-mono font-semibold text-base tracking-tight">{lead._id}</span>
                                 </div>
                             </TableCell>
                             <TableCell>
-                                <Badge variant="secondary" className="font-mono text-primary bg-primary/10 hover:bg-primary/20 border-0">
+                                <Badge variant="secondary" className="font-mono text-primary bg-primary/15 hover:bg-primary/25 border-0 text-sm px-2.5 py-0.5">
                                     {lead.score} XP
                                 </Badge>
                             </TableCell>
-                            <TableCell className="text-xs text-muted-foreground font-mono">
+                            <TableCell className="text-sm text-muted-foreground font-mono">
                                 {lead.updatedAt ? new Date(lead.updatedAt).toLocaleTimeString() : '-'}
                             </TableCell>
                             <TableCell className="text-right">
-                                <Button variant="outline" size="sm" className="h-7 text-xs" asChild>
+                                <Button variant="outline" size="sm" className="h-8 text-xs font-medium border-white/10 hover:bg-primary hover:text-primary-foreground transition-colors" asChild>
                                     <Link to={`/leads/${lead._id}`}>
                                         Analyze <ArrowUpRight className="ml-1 h-3 w-3" />
                                     </Link>
