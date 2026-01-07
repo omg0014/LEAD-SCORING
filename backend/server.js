@@ -44,8 +44,9 @@ async function seedRules() {
 
 // Middleware
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
+    origin: [process.env.CLIENT_URL, 'http://localhost:5173', 'https://lead-scoring-front.vercel.app'].filter(Boolean),
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
 }));
 app.use(express.json());
 
@@ -68,4 +69,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { app };
+module.exports = { app, server, PORT };

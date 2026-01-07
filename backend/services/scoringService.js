@@ -1,5 +1,5 @@
 const { Lead, Event, ScoreHistory, ScoringRule } = require('../models');
-const { io } = require('../server');
+
 const { getIO } = require('../socket');
 
 

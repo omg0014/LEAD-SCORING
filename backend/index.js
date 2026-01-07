@@ -22,7 +22,10 @@ const bootstrap = async () => {
 
         // 2. Start Application
         // We require server.js HERE so that it picks up the new process.env values
-        require('./server');
+        const { server, PORT } = require('./server');
+        server.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
 
     } catch (error) {
         console.error('Bootstrap Error:', error);
