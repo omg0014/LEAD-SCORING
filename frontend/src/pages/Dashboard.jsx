@@ -35,7 +35,11 @@ const Dashboard = () => {
         fetchLeads();
 
         // Socket.IO Connection
-        const socket = io(import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5001');
+        const socket = io(import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : (import.meta.env.MODE === 'production' ? '/' : 'http://localhost:5001'), {
+            path: '/socket.io/',
+            transports: ['polling', 'websocket'],
+            withCredentials: true
+        });
 
         socket.on('connect', () => {
             console.log('Connected to WebSocket');
