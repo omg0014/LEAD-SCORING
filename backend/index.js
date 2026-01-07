@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 
 const bootstrap = async () => {
     try {
-        // 1. Start MongoDB (System or Embedded)
-        // We'll just define the connection URI globally for the app to use
+
         let mongoUri = process.env.MONGO_URI;
         try {
             await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 2000 });
@@ -20,8 +19,7 @@ const bootstrap = async () => {
             process.env.MONGO_URI = mongoUri;
         }
 
-        // 2. Start Application
-        // We require server.js HERE so that it picks up the new process.env values
+
         const { server, PORT } = require('./server');
         server.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);

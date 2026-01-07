@@ -14,18 +14,14 @@ const ruleRoutes = require('./routes/ruleRoutes');
 const app = express();
 const server = http.createServer(app);
 
-// Connect to Database (Only if not already connected - though index.js handles it)
-// Connect to Database (Only if not already connected - though index.js handles it)
+// Connect to Database
 if (mongoose.connection.readyState === 0) {
     connectDB().then(async () => {
         await seedRules();
     }).catch(err => {
         console.error('Failed to connect to DB during startup:', err.message);
-        // We do NOT exit here. We let the server start so it can respond with 500 errors
-        // instead of crashing effectively allowing the "CORS" headers to still be sent by the error handler.
     });
 } else {
-    // Already connected by index.js
     seedRules();
 }
 
@@ -48,7 +44,6 @@ async function seedRules() {
 }
 
 // Middleware
-
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
@@ -56,18 +51,10 @@ const allowedOrigins = [
     process.env.CLIENT_URL
 ].filter(Boolean);
 
-// Allow specific origins with credentials
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) === -1) {
-            // Optional: You can choose to allow all or log warning
-            // For now, we are permissive but using specific list allows credentials to work better
-            // than origin: true in some specific browser/proxy scenarios, 
-            // but origin: true is generally fine too. 
-            // Let's stick to true for maximum flexibility unless specific blocking
-            // For Vercel, explicit is better.
             return callback(null, true);
         }
         return callback(null, true);
@@ -76,17 +63,15 @@ app.use(cors({
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
-// app.options('*', cors()); // REMOVED: Causing crash in Express 5.x. Global cors middleware above should handle it.
+
 app.use(express.json());
-
-
 
 // API Routes
 app.use('/api/events', eventRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/rules', ruleRoutes);
 
-// Health Check - Important for Vercel
+
 app.get('/', (req, res) => {
     const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
     res.status(200).json({
@@ -107,8 +92,8 @@ app.head('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5001;
-// Socket.IO - Only initialize if NOT in strict serverless mode or handle gracefully
-// Socket.IO - Initialize unconditionally (supports polling on Vercel)
+
+// Socket.IO
 let io;
 try {
     io = require('./socket').init(server);
@@ -127,7 +112,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Only start server if running directly (not required as a module)
+
 if (require.main === module) {
     server.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);

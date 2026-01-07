@@ -27,7 +27,6 @@ const processEvent = async (eventData) => {
     // Get Score Points
     const points = await calculateScore(eventType);
     if (points === 0 && eventType !== 'Identity') {
-        // Maybe log unknown event type?
     }
 
     // Update Score

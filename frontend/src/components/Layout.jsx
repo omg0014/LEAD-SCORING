@@ -34,7 +34,7 @@ const Layout = ({ children }) => {
 
     return (
         <div className="flex min-h-screen bg-background">
-            {/* Mobile Menu Toggle */}
+
             <div className="md:hidden fixed top-4 right-4 z-50">
                 <Button variant="outline" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="bg-background/80 backdrop-blur-md border-border shadow-lg">
                     {isMobileMenuOpen ? <Zap className="h-5 w-5" /> : <LayoutDashboard className="h-5 w-5" />}

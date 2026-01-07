@@ -36,10 +36,6 @@ const Dashboard = () => {
 
         // Socket.IO Connection
         import('../services/api').then(({ API_BASE_URL }) => {
-            // Extract the domain for socket connection if needed, or pass full URL
-            // Socket.io client usually expects the host.
-            // If API_BASE_URL is 'http://localhost:5001', we use that.
-            // If 'https://myapp.com/api', we might need just 'https://myapp.com'
             const socketUrl = API_BASE_URL.replace('/api', '');
 
             const socket = io(socketUrl, {
@@ -59,7 +55,7 @@ const Dashboard = () => {
             });
 
             socket.on('score_update', (data) => {
-                // Refresh leads on score update for accurate ranking
+                // Refresh leads on score update 
                 fetchLeads();
             });
 

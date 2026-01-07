@@ -46,7 +46,6 @@ router.post('/batch', async (req, res) => {
 
         let processed = 0;
         for (const evt of events) {
-            // Basic validation
             if (!evt.eventId || !evt.leadId || !evt.eventType) continue;
 
             await eventQueue.add(evt);

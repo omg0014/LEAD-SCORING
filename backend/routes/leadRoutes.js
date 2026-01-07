@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Lead, ScoreHistory, Event } = require('../models');
 
-// GET /api/leads - Leaderboard / List
+// GET  Leaderboard List
 router.get('/', async (req, res) => {
     try {
         const { limit = 10, search } = req.query;
