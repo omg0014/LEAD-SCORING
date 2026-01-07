@@ -20,6 +20,7 @@ const connectDB = async () => {
                 return;
             } catch (err) {
                 if (isProduction) throw err; // Fatal in prod
+                console.error('System MongoDB Connection Error:', err);
                 console.warn('System MongoDB failed, trying embedded fallback...', err.message);
             }
         }

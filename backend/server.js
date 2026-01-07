@@ -76,7 +76,7 @@ app.use(cors({
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
-app.options('*', cors()); // Enable pre-flight for all routes
+// app.options('*', cors()); // REMOVED: Causing crash in Express 5.x. Global cors middleware above should handle it.
 app.use(express.json());
 
 
