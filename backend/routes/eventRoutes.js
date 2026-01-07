@@ -12,8 +12,7 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        // Optional: Check if event already exists to save queue overhead
-        // But queue handles idempotency too.
+
         const existing = await Event.findOne({ eventId });
         if (existing) {
             return res.status(409).json({ message: 'Event already exists', event: existing });

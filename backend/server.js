@@ -1,5 +1,5 @@
 require('dotenv').config();
-const mongoose = require('mongoose'); // Needed for readiness check
+const mongoose = require('mongoose');
 const express = require('express');
 const http = require('http');
 const cors = require('cors');

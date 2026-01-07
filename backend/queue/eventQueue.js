@@ -12,7 +12,7 @@ const eventQueue = {
 
         return Promise.resolve();
     },
-    // Mock the process method if needed, but we don't need it anymore
+
     process: () => { }
 };
 

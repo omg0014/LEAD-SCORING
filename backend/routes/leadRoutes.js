@@ -11,7 +11,6 @@ router.get('/', async (req, res) => {
             query._id = { $regex: search, $options: 'i' };
         }
 
-        // Use .sort() properly. score: -1 for descending
         const leads = await Lead.find(query)
             .sort({ score: -1 })
             .limit(parseInt(limit));
