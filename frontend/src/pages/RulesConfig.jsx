@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Save, Loader2, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -18,7 +18,7 @@ const RulesConfig = () => {
 
     const fetchRules = async () => {
         try {
-            const res = await axios.get('http://localhost:5001/api/rules');
+            const res = await api.get('/rules');
             setRules(res.data);
         } catch (err) {
             console.error('Failed to fetch rules', err);
@@ -36,7 +36,7 @@ const RulesConfig = () => {
     const saveRule = async (rule) => {
         setSaving(true);
         try {
-            await axios.post('http://localhost:5001/api/rules', {
+            await api.post('/rules', {
                 eventType: rule.eventType,
                 points: rule.points,
                 isActive: rule.isActive

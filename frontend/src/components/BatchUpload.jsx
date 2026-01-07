@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Upload, FileJson, FileText, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import api from '../services/api';
 import Papa from 'papaparse';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -71,7 +71,7 @@ const BatchUpload = ({ onUploadComplete }) => {
                 alert('No valid events found in file');
                 return;
             }
-            const res = await axios.post('http://localhost:5001/api/events/batch', events);
+            const res = await api.post('/events/batch', events);
             alert(res.data.message);
             if (onUploadComplete) onUploadComplete();
             if (fileInputRef.current) fileInputRef.current.value = '';

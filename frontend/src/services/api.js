@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+export const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === 'production' ? 'https://lead-scoring-5r0r.onrender.com' : 'http://localhost:5001');
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || (import.meta.env.MODE === 'production' ? 'https://lead-scoring-back.vercel.app/api' : 'http://localhost:5001/api'),
+    baseURL: `${API_BASE_URL}/api`,
 });
 
 export const getLeads = async () => (await api.get('/leads')).data;

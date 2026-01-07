@@ -34,17 +34,22 @@ const Dashboard = () => {
     useEffect(() => {
         fetchLeads();
 
-        // Socket.IO Connection - Only in Development
-        // Vercel Serverless Functions do not support persistent websockets.
-        if (import.meta.env.MODE !== 'production') {
-            const socket = io('http://localhost:5001', {
+        // Socket.IO Connection
+        import('../services/api').then(({ API_BASE_URL }) => {
+            // Extract the domain for socket connection if needed, or pass full URL
+            // Socket.io client usually expects the host.
+            // If API_BASE_URL is 'http://localhost:5001', we use that.
+            // If 'https://myapp.com/api', we might need just 'https://myapp.com'
+            const socketUrl = API_BASE_URL.replace('/api', '');
+
+            const socket = io(socketUrl, {
                 path: '/socket.io/',
                 transports: ['polling', 'websocket'],
                 withCredentials: true
             });
 
             socket.on('connect', () => {
-                console.log('Connected to WebSocket');
+                console.log('Connected to WebSocket:', socketUrl);
             });
 
             socket.on('lead_update', (updatedLead) => {
@@ -59,7 +64,7 @@ const Dashboard = () => {
             });
 
             return () => socket.disconnect();
-        }
+        });
     }, []);
 
     // Filter Logic
