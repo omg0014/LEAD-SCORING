@@ -13,15 +13,21 @@ const connectDB = async () => {
 
         // Try connecting to provided URI first
         if (connStr) {
-            console.log('Connecting to MongoDB...');
-            await mongoose.connect(connStr, { serverSelectionTimeoutMS: 5000 });
-            console.log('MongoDB Connected.');
-            return;
+            try {
+                console.log('Connecting to MongoDB (System)...');
+                await mongoose.connect(connStr, { serverSelectionTimeoutMS: 2000 });
+                console.log('MongoDB Connected (System).');
+                return;
+            } catch (err) {
+                if (isProduction) throw err; // Fatal in prod
+                console.warn('System MongoDB failed, trying embedded fallback...', err.message);
+            }
         }
 
         // --- LOCAL FALLBACK ONLY ---
+        // If we reached here in dev, either no URI or URI failed
         if (!isProduction) {
-            console.log('No MONGO_URI, starting embedded database (dev only)...');
+            console.log('Starting embedded database (dev only)...');
             const { MongoMemoryServer } = require('mongodb-memory-server');
             const mongod = await MongoMemoryServer.create();
             const uri = mongod.getUri();
