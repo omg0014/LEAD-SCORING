@@ -62,7 +62,7 @@ const RulesConfig = () => {
                             Configure point vectors for event processing.
                         </p>
                     </div>
-                    <Badge variant="outline" className="font-mono">v1.0.0</Badge>
+
                 </div>
             </div>
 
@@ -115,23 +115,7 @@ const RulesConfig = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-muted/10 border-dashed">
-                    <CardHeader>
-                        <CardTitle className="text-sm">Configuration Guide</CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-xs text-muted-foreground space-y-4 font-mono">
-                        <p>
-                            Changes to scoring rules are applied immediately to all <strong>future</strong> events.
-                        </p>
-                        <p>
-                            Historical scores are immutable to preserve audit integrity.
-                        </p>
-                        <div className="p-3 bg-background rounded border">
-                            <h4 className="font-bold text-foreground mb-1">Tip</h4>
-                            <p>High-value actions like "Purchase" should be at least 10x "Page View".</p>
-                        </div>
-                    </CardContent>
-                </Card>
+
             </div>
         </div>
     );

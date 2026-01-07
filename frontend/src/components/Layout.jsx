@@ -42,11 +42,7 @@ const Layout = ({ children }) => {
                     <NavItem to="/rules" icon={Settings} label="Rules Config" />
                 </nav>
 
-                <div className="p-4 border-t border-border">
-                    <div className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest text-center">
-                        Student Build v2.0
-                    </div>
-                </div>
+
             </aside>
 
             {/* Main Content */}
