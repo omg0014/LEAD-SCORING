@@ -35,13 +35,14 @@ const connectDB = async () => {
             await mongoose.connect(uri);
         } else {
             console.error('Fatal: No MONGO_URI provided in production.');
-            process.exit(1);
+            throw new Error('No MONGO_URI provided in production');
         }
 
 
     } catch (error) {
         console.error('MongoDB Connection Check Failed:', error);
-        process.exit(1);
+        // Do NOT exit process, let the server start or fail gracefully so we get logs/headers
+        throw error;
     }
 };
 

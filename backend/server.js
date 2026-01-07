@@ -15,9 +15,14 @@ const app = express();
 const server = http.createServer(app);
 
 // Connect to Database (Only if not already connected - though index.js handles it)
+// Connect to Database (Only if not already connected - though index.js handles it)
 if (mongoose.connection.readyState === 0) {
     connectDB().then(async () => {
         await seedRules();
+    }).catch(err => {
+        console.error('Failed to connect to DB during startup:', err.message);
+        // We do NOT exit here. We let the server start so it can respond with 500 errors
+        // instead of crashing effectively allowing the "CORS" headers to still be sent by the error handler.
     });
 } else {
     // Already connected by index.js
@@ -71,6 +76,7 @@ app.use(cors({
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
+app.options('*', cors()); // Enable pre-flight for all routes
 app.use(express.json());
 
 
@@ -101,6 +107,16 @@ try {
 } catch (e) {
     console.error('Socket.IO failed to initialize:', e);
 }
+
+// Global Error Handler - MUST be last
+app.use((err, req, res, next) => {
+    console.error('Unhandled Error:', err);
+    res.status(500).json({
+        error: 'Internal Server Error',
+        message: process.env.NODE_ENV === 'development' ? err.message : 'An unexpected error occurred',
+        trace: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
+});
 
 // Only start server if running directly (not required as a module)
 if (require.main === module) {
