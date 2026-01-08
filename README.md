@@ -22,7 +22,7 @@ Before you begin, ensure you have the following installed:
 
 ### 1. Clone the Repository
 ```bash
-git clone <your-repo-url>
+git clone [<your-repo-url>](https://github.com/omg0014/LEAD-SCORING.git)
 cd lead-scoring
 ```
 
