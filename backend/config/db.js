@@ -6,24 +6,24 @@ const connectDB = async () => {
     try {
         const connStr = process.env.MONGO_URI;
         if (!connStr && isProduction) {
-            throw new Error('MONGO_URI is missing in production!');
+            throw new Error('MONGO_URI is missing');
         }
 
         if (connStr) {
             try {
-                console.log('Connecting to MongoDB (System)...');
+                console.log('Connecting to MongoDB');
                 await mongoose.connect(connStr, { serverSelectionTimeoutMS: 2000 });
-                console.log('MongoDB Connected (System).');
+                console.log('MongoDB Connected');
                 return;
             } catch (err) {
                 if (isProduction) throw err;
-                console.error('System MongoDB Connection Error:', err);
-                console.warn('System MongoDB failed, trying embedded fallback...', err.message);
+                console.error('System MongoDB Connection Error', err);
+                console.warn('System MongoDB failed', err.message);
             }
         }
 
         if (!isProduction) {
-            console.log('Starting embedded database (dev only)...');
+            console.log('Starting  database');
             const { MongoMemoryServer } = require('mongodb-memory-server');
             const mongod = await MongoMemoryServer.create();
             const uri = mongod.getUri();

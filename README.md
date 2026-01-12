@@ -90,21 +90,92 @@ npm run dev
 
 ---
 
-## 🔍 Verification
+## � API Documentation
 
-1.  **Dashboard**: Open the frontend. You should see the "Live Intelligence" dashboard.
-2.  **Server Status**: Visit `http://localhost:5001/`. It should return `{"database": "Connected", ...}`.
-3.  **Real-Time Test**:
-    - Open the app in two different tabs.
-    - Submit a "Simulate Event" in one tab.
-    - Watch the score update instantly in the other tab.
+### Events
+| Method | Endpoint | Description | Payload Example |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/api/events` | Ingest a single event used for scoring. | `{ "eventId": "evt_001", "leadId": "lead_123", "eventType": "Page View", "timestamp": "2023-10-27T10:00:00Z" }` |
+| **POST** | `/api/events/batch` | Ingest multiple events at once. | `[ { "eventId": "evt_001", ... }, { "eventId": "evt_002", ... } ]` |
+
+### Leads
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **GET** | `/api/leads` | Retrieve a leaderboard of top leads (supports `?limit=N` and `?search=ID`). |
+| **GET** | `/api/leads/:id` | Get detailed profile, score history, and raw event logs for a specific lead. |
+
+### Rules
+| Method | Endpoint | Description | Payload Example |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/rules` | Fetch all active scoring rules and point values. | N/A |
+| **POST** | `/api/rules` | Create or update a scoring rule. | `{ "eventType": "Webinar", "points": 50, "isActive": true }` |
 
 ---
 
-## 🐛 Troubleshooting
+## 🗄️ Database Schema
 
-| Issue | Cause | Solution |
-| :--- | :--- | :--- |
-| **ERR_CONNECTION_REFUSED** | Backend is not running. | Ensure `npm run dev` is running in `backend/` and port 5001 is free. |
-**CORS Error** | Mismatched ports/origins. | Ensure `CLIENT_URL` in backend `.env` matches your frontend URL exactly. |
-| **Socket Connection Failed** | Backend not reachable. | Check if `VITE_API_URL` points to the correct backend address. |
+The system uses **MongoDB** with Mongoose ODM.
+
+### 1. Leads Collection
+Stores the current state of a user/lead.
+- `_id` (String): Unique identifier (e.g., email or user ID).
+- `score` (Number): Current calculated score.
+- `lastEventId` (String): ID of the last processed event to ensure idempotency.
+- `updatedAt` (Date): Last activity timestamp.
+
+### 2. Events Collection
+An append-only log of all raw events received.
+- `eventId` (String): Unique event ID (deduplication key).
+- `leadId` (String): Reference to the lead.
+- `eventType` (String): Type of interaction (e.g., "Page View").
+- `metadata` (Object): Arbitrary context data.
+- `processed` (Boolean): Flag indicating if score has been calculated.
+
+### 3. ScoreHistory Collection
+Tracks score changes over time for analytics and charts.
+- `leadId` (String): Reference to the lead.
+- `oldScore` / `newScore` (Number): Score before and after the event.
+- `delta` (Number): Points added/subtracted.
+- `timestamp` (Date): When the change occurred.
+
+### 4. ScoringRules Collection
+Configurable rules engine.
+- `eventType` (String): The trigger key.
+- `points` (Number): Value to add (can be negative).
+- `isActive` (Boolean): Master switch for the rule.
+
+---
+
+## 🏗️ Architecture & Decisions
+
+### Event-Driven Architecture
+The system is designed to be **asynchronous** and **non-blocking**.
+- **Ingestion**: Events are accepted immediately by the API (`202 Accepted`) and pushed to an in-memory queue.
+- **Processing**: A worker consumes the queue, validates the event, calculates the score based on active rules, and updates the database.
+- **Real-Time Feedback**: Once a score is updated, the backend emits a Socket.IO event (`leadUpdated`) to connected clients, ensuring the dashboard is always live without polling.
+
+### Trade-offs
+- **In-Memory Queue**: Currently uses a JavaScript array/object for the queue. **Pros**: Zero infrastructure overhead, fastest possible implementation. **Cons**: Events are lost if the server crashes. *Production Plan: Replace with Redis/BullMQ.*
+- **MongoDB for Ledger**: We store both the *current state* (Leads) and the *transaction log* (Events/ScoreHistory). This allows for replaying history if scoring rules change, at the cost of higher storage usage.
+
+---
+
+## 🧠 Operational Strategies
+
+### 1. Conflict Resolution
+- **Idempotency**: Every event must have a unique `eventId`. The system creates an `Event` record first; if a duplicate `eventId` is received, it is discarded immediately, preventing double-counting of scores.
+- **Atomic Updates**: MongoDB atomic operators (like `$inc` could be used, though we currently read-modify-write for validation) ensure data integrity.
+
+### 2. Rate Limiting Strategy
+- **Ingestion Layer**: While the current MVP lacks explicit middleware, the architecture supports high throughput by offloading processing to the queue. The API creates a lightweight promise and returns quickly.
+- **Batch Processing**: The `/api/events/batch` endpoint allows clients to send bulk data (e.g., 100 events/sec) in a single HTTP request, significantly reducing network overhead and TCP handshake costs.
+
+### 3. Error Recovery
+- **Global Error Handler**: A centralized Express error handler catches unhandled exceptions to prevent server crashes.
+- **Graceful Degradation**: If the WebSocket connection fails, the frontend handles the disconnection gracefully and attempts to reconnect. The HTTP API remains functional for fetching data manually.
+- **Queue Safeties**: Failed events are logged. In a production version using Redis, these would be moved to a "Dead Letter Queue" for manual inspection.
+
+### 4. Performance Optimizations
+- **Indexing**: MongoDB collections are indexed on frequently queried fields (`leadId`, `score` descending for leaderboards, `timestamp`).
+- **Projection**: API endpoints select only necessary fields to reduce payload size.
+- **Asynchronous I/O**: Heavy database writes happen in the background after the API has already responded to the client, ensuring low latency for the event source.
